@@ -1,4 +1,5 @@
 // TODO: Include packages needed for this application
+const { constants } = require('buffer');
 const fs = require('fs');
 const inquirer = require('inquirer');
 const generateMarkdown = require('./utils/generateMarkdown');
@@ -7,12 +8,6 @@ const generateMarkdown = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
 const promptUser = () => {
-//     for (var i = 0; i < questions.length; i++) {
-//         inquirer.prompt(questions[i]);
-//         promptUser();
-//     }
-// }
-// const questions = [
     return inquirer.prompt([
         {
             type: 'input',
@@ -39,11 +34,6 @@ const promptUser = () => {
                 }
             }
         },{
-            type: 'checkbox',
-            name: 'tableOfContents',
-            message: 'Table of contents for your repository?',
-            choices: ['Installation', 'Usage', 'Credits', 'License', 'Contribution']
-        },{
             type: 'input',
             name: 'installation',
             message: 'What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running. (Required)',
@@ -57,7 +47,7 @@ const promptUser = () => {
             }
         }, {
             type: 'input',
-            name: 'Usage',
+            name: 'usage',
             message: 'Provide instructions and examples for use. Include screenshots as needed.(Required)',
             validate: usage => {
                 if(usage) {
@@ -69,9 +59,12 @@ const promptUser = () => {
             }
         },{
             type: 'checkbox',
-            name: 'License',
+            name: 'license',
             message: 'The last section of a good README is a license. (Required)',
-            choices:['MIT License',  'GNU GENERAL PUBLIC LICENSE'],
+            choices:['[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)',
+                '[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)',
+                '[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)'
+                ],
             validate: license => {
                 if(license) {
                     return true;
@@ -81,28 +74,34 @@ const promptUser = () => {
                 }
             }
         },{
-            type: 'checkbox',
-            name: 'Contributing',
-            message: 'Would u like to contribute to the repository',
-            choices: ['[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)']
+            type: 'input',
+            name: 'github',
+            message: 'Here is alink to my github account'
         },{
             type: 'input',
-            name: 'Questions',
-            message: 'Here is alink to my github for additional questions'
+            name: 'email',
+            message: 'Here is alink to my email for addtional questions'
         }
-
     ])
+    .then(projectData => {
+        const file = './utils/generateMarkdown.md';
+        console.log('111', projectData) 
+        writeFile(file, projectData)
+
+    })
+
 };
 
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {
-    fs.writeFile(filename, JSON.stringify(data, null, '\t'), function(err) {
+function writeFile(fileName, data) {
+    const pageMD = generateMarkdown(data);
+    fs.writeFile(fileName, pageMD, function(err) {
         if (err) {
           return console.log(err);
         }
   
         console.log('Success!');
-      });
+      }); 
 }
 
 // TODO: Create a function to initialize app
